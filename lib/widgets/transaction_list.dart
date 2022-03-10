@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
-import 'package:intl/intl.dart';
+import './transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -11,6 +11,7 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("build transactionList");
     return transactions.isEmpty
         ? LayoutBuilder(builder: (ctx, constraints) {
             return Column(
@@ -40,47 +41,23 @@ class TransactionList extends StatelessWidget {
             );
           })
         : Container(
-            child: ListView.builder(
-              itemBuilder: (ctx, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    border: Border.all(color: Color.fromRGBO(60, 60, 60, 1)),
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: FittedBox(
-                            child: Text('\$${transactions[index].amount}')),
-                      ),
+            child: ListView(
+              children: transactions
+                  .map(
+                    (tx) => TransactionItem(
+                      key: ValueKey(tx.id),
+                      transaction: tx,
+                      removeTx: removeTx,
                     ),
-                    title: Text(
-                      transactions[index].title,
-                      style: TextStyle(color: Color.fromRGBO(220, 220, 220, 1)),
-                    ),
-                    subtitle: Text(
-                      DateFormat.yMMMd().format(transactions[index].date),
-                      style: TextStyle(color: Color.fromRGBO(220, 220, 220, 1)),
-                    ),
-                    trailing: IconButton(
-                      onPressed: () {
-                        removeTx(transactions[index].id);
-                      },
-                      icon: Icon(
-                        Icons.delete,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                );
-              },
-              itemCount: transactions.length,
+                  )
+                  .toList(),
             ),
+            // ListView.builder(
+            //   itemBuilder: (ctx, index) {
+            //     return TransactionItem(transaction: transactions[index], removeTx: removeTx);
+            //   },
+            //   itemCount: transactions.length,
+            // ),
           );
   }
 }

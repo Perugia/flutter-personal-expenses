@@ -2,23 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
+final _textController = TextEditingController();
+final _amountController = TextEditingController();
+DateTime _selectedDate = DateTime.now();
+
 class NewTransaction extends StatefulWidget {
   final Function AddTxHandler;
-  BuildContext ctx;
-
-  NewTransaction(this.AddTxHandler, this.ctx);
+  NewTransaction(this.AddTxHandler) {
+    print("Constructor NewTransaction Widget");
+  }
 
   @override
-  State<NewTransaction> createState() => _NewTransactionState();
+  State<NewTransaction> createState() {
+    print('createState newTransaction Widget');
+    return _NewTransactionState();
+  }
 }
 
-class _NewTransactionState extends State<NewTransaction> {
+class _NewTransactionState extends State<NewTransaction>
+    with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
 
-  final _textController = TextEditingController();
-  final _amountController = TextEditingController();
-
-  DateTime _selectedDate = DateTime.now();
+  _NewTransactionState() {
+    print("Constructor NewTransaction State");
+  }
 
   void _submitData() {
     final enteredTitle = _textController.text;
@@ -37,9 +44,10 @@ class _NewTransactionState extends State<NewTransaction> {
       _selectedDate,
     );
 
-    _textController.text = "";
-    _amountController.text = "";
-    Navigator.pop(widget.ctx);
+    _textController.clear();
+    _amountController.clear();
+    _selectedDate = DateTime.now();
+    Navigator.pop(context);
   }
 
   void _presentDatePicker() {
@@ -69,33 +77,37 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   void initState() {
-    super.initState();
-
+    print("initState()");
     amountTextFocus = FocusNode();
     chooseDateFocus = FocusNode();
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    print("didUpDateWidget()");
+    super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    // Clean up the focus node when the Form is disposed.
+    print("dispose()");
     amountTextFocus.dispose();
     chooseDateFocus.dispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
     return Container(
       width: 300,
-      padding:
-          EdgeInsets.only(bottom: (MediaQuery.of(context).viewInsets.bottom)),
+      padding: EdgeInsets.only(bottom: (mediaQuery.viewInsets.bottom)),
       child: Card(
         elevation: 5,
         child: Container(
           padding: EdgeInsets.all(20),
           child: Form(
-            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -141,7 +153,7 @@ class _NewTransactionState extends State<NewTransaction> {
                             : DateFormat.yMMMMd().format(_selectedDate),
                       ),
                       TextButton(
-                          focusNode: chooseDateFocus,
+                          //focusNode: chooseDateFocus,
                           onPressed: _presentDatePicker,
                           child: Text(
                             'Choose Date',
@@ -158,10 +170,10 @@ class _NewTransactionState extends State<NewTransaction> {
                   ),
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
-                      _submitData();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Successfully added!')),
-                      );
+                    _submitData();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Successfully added!')),
+                    );
                     }
                   },
                   style: TextButton.styleFrom(

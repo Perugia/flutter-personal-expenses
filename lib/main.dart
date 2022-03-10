@@ -45,15 +45,17 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _userTransactions = [];
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  final List<Transaction> _userTransactions = [
+    //Transaction(id: UniqueKey(), title: "haha", amount: 12, date: DateTime.now())
+  ];
 
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
         builder: (ctx) {
           return SingleChildScrollView(
-            child: NewTransaction(_addNewTransaction, ctx),
+            child: NewTransaction(_addNewTransaction),
           );
         });
   }
@@ -78,9 +80,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print("build scaffold");
+    //final mediaQuery = MediaQuery.of(context);
     final appBar = AppBar(
-      title: const Text('Personal Expenses'),
+      title: Text('Personal Expenses'),
       actions: [
         IconButton(
           onPressed: () => _startAddNewTransaction(context),
@@ -89,30 +111,30 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: appBar,
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Container(
-                height: (MediaQuery.of(context).size.height -
-                        appBar.preferredSize.height -
-                        47) *
-                    0.3,
-                child: Chart(_userTransactions),
-              ),
-              Container(
-                  height: (MediaQuery.of(context).size.height -
-                          appBar.preferredSize.height -
-                          47) *
-                      0.7,
-                  child:
-                      TransactionList(_userTransactions, _deleteTransaction)),
-            ],
+      body: LayoutBuilder(
+          builder: (BuildContext context, final BoxConstraints constraints) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Container(
+                  height: (constraints.maxHeight - 20) * 0.3,
+
+                  child: Chart(_userTransactions),
+                ),
+                Container(
+                    height: (constraints.maxHeight - 20) * 0.7,
+
+                    child:
+                        TransactionList(_userTransactions, _deleteTransaction)),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () => _startAddNewTransaction(context),
       //   child: Icon(Icons.add_chart),

@@ -6,11 +6,16 @@ import './chart_bar.dart';
 
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransactions;
-  Chart(this.recentTransactions);
+  Chart(this.recentTransactions) {
+    print("Constuctor Chart");
+  }
 
   List<Map<String, Object>> get groupTransactionValues {
     return List.generate(7, (index) {
-      final weekDay = DateTime.now().subtract(Duration(days: index));
+      DateTime now = DateTime.now();
+      final firstDayWeek =
+          DateTime(now.year, now.month, now.day + (7 - now.weekday));
+      final weekDay = firstDayWeek.subtract(Duration(days: index));
       var totalSum = 0.0;
 
       for (var i = 0; i < recentTransactions.length; i++) {
@@ -37,14 +42,15 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("build Chart");
     return Container(
       decoration: BoxDecoration(
         color: Colors.black,
         border: Border.all(color: Color.fromRGBO(60, 60, 60, 1)),
         borderRadius: BorderRadius.all(Radius.circular(5)),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 25),
-      margin: EdgeInsets.only(bottom: 10, top: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 25),
+      margin: const EdgeInsets.only(bottom: 10, top: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: groupTransactionValues.map((data) {

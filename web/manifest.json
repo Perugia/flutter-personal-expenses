@@ -1,6 +1,6 @@
 {
-    "name": "flutter_personal_expenses",
-    "short_name": "flutter_personal_expenses",
+    "name": "personal_expenses",
+    "short_name": "personal_expenses",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

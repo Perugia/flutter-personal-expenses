@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -7,9 +8,11 @@ final _amountController = TextEditingController();
 DateTime _selectedDate = DateTime.now();
 
 class NewTransaction extends StatefulWidget {
-  final Function AddTxHandler;
-  NewTransaction(this.AddTxHandler) {
-    print("Constructor NewTransaction Widget");
+  final Function addTxHandler;
+  NewTransaction(this.addTxHandler, {Key? key}) : super(key: key) {
+    if (kDebugMode) {
+      print("Constructor NewTransaction Widget");
+    }
   }
 
   @override
@@ -38,7 +41,7 @@ class _NewTransactionState extends State<NewTransaction>
       return;
     }
 
-    widget.AddTxHandler(
+    widget.addTxHandler(
       enteredTitle,
       enteredAmount,
       _selectedDate,
@@ -72,8 +75,8 @@ class _NewTransactionState extends State<NewTransaction>
     DecimalTextForm(RegExp(r'^\d*\.?\d*$')),
   ];
 
-  FocusNode amountTextFocus;
-  FocusNode chooseDateFocus;
+  late FocusNode amountTextFocus;
+  late FocusNode chooseDateFocus;
 
   @override
   void initState() {
@@ -108,6 +111,7 @@ class _NewTransactionState extends State<NewTransaction>
         child: Container(
           padding: EdgeInsets.all(20),
           child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -155,7 +159,7 @@ class _NewTransactionState extends State<NewTransaction>
                       TextButton(
                           //focusNode: chooseDateFocus,
                           onPressed: _presentDatePicker,
-                          child: Text(
+                          child: const Text(
                             'Choose Date',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ))
@@ -163,22 +167,24 @@ class _NewTransactionState extends State<NewTransaction>
                   ),
                 ),
                 TextButton(
-                  child: Text(
-                    "Add Transaction",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
                   onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                    _submitData();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Successfully added!')),
-                    );
+                    if (_formKey.currentState == null) {
+                      print("_formKey.currentState is null!");
+                    } else if (_formKey.currentState!.validate()) {
+                      _submitData();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Successfully added!')),
+                      );
                     }
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     primary: Theme.of(context).primaryColor,
+                  ),
+                  child: const Text(
+                    "Add Transaction",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ],

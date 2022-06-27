@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import './widgets/transaction_list.dart';
-import './widgets/new_transaction.dart';
-import './models/transaction.dart';
-import './widgets/chart.dart';
+import 'package:personal_expenses/widgets/transaction_list.dart';
+import 'package:personal_expenses/widgets/new_transaction.dart';
+import 'package:personal_expenses/models/transaction.dart';
+import 'package:personal_expenses/widgets/chart.dart';
 
 void main() {
   //Disable Landscape Mode
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.black, //fromRGBO(245, 245, 245, 1),
         fontFamily: 'Quicksand',
         // ignore: deprecated_member_use
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
             titleTextStyle: TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 20,
@@ -122,12 +122,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               children: [
                 Container(
                   height: (constraints.maxHeight - 20) * 0.3,
-
                   child: Chart(_userTransactions),
                 ),
                 Container(
                     height: (constraints.maxHeight - 20) * 0.7,
-
                     child:
                         TransactionList(_userTransactions, _deleteTransaction)),
               ],
@@ -135,11 +133,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           ),
         );
       }),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => _startAddNewTransaction(context),
-      //   child: Icon(Icons.add_chart),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

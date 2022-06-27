@@ -10,7 +10,7 @@ class Chart extends StatelessWidget {
     print("Constuctor Chart");
   }
 
-  List<Map<String, Object>> get groupTransactionValues {
+  List<Map> get groupTransactionValues {
     return List.generate(7, (index) {
       DateTime now = DateTime.now();
       final firstDayWeek =
@@ -24,19 +24,18 @@ class Chart extends StatelessWidget {
             recentTransactions[i].date.year == weekDay.year) {
           totalSum += recentTransactions[i].amount;
         }
-        ;
       }
 
       return {
+        'amount': double.parse(totalSum.toStringAsFixed(2)),
         'day': DateFormat.E().format(weekDay).substring(0, 1),
-        'amount': double.parse(totalSum.toStringAsFixed(2))
       };
     }).reversed.toList();
   }
 
   double get totalSpending {
     return groupTransactionValues.fold(0.0, (sum, item) {
-      return sum + item['amount'];
+      return sum + item["amount"];
     });
   }
 
